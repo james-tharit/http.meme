@@ -1,0 +1,67 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+    code: number;
+    title: string;
+    eager?: boolean;
+}
+
+const { code, title, eager = false } = Astro.props;
+
+// Drop <code>.jpg|png|webp into src/assets/code/ and it replaces the placeholder.
+const images = import.meta.glob<{ default: ImageMetadata }>(
+    "../assets/code/*.{jpg,jpeg,png,webp}",
+    { eager: true },
+);
+const found = Object.entries(images).find(
+    ([filePath]) => filePath.split("/").pop()?.split(".")[0] === String(code),
+);
+---
+
+{
+    found ? (
+        <Image
+            src={found[1].default}
+            alt={title}
+            loading={eager ? "eager" : "lazy"}
+        />
+    ) : (
+        <svg
+            class="placeholder"
+            viewBox="0 0 1200 630"
+            role="img"
+            aria-label={`${code} ${title}`}
+        >
+            <rect width="1200" height="630" fill="var(--surface)" />
+            <text x="80" y="300" class="ph-code">
+                {code}
+            </text>
+            <text x="80" y="382" class="ph-title">
+                {title.toUpperCase()}
+            </text>
+            <rect x="80" y="424" width="220" height="10" fill="var(--primary)" />
+        </svg>
+    )
+}
+
+<style>
+    img,
+    .placeholder {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .ph-code {
+        font-size: 180px;
+        font-weight: 700;
+        fill: var(--primary);
+    }
+
+    .ph-title {
+        font-size: 54px;
+        font-weight: 700;
+        fill: var(--text);
+    }
+</style>

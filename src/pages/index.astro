@@ -1,0 +1,76 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CodeImage from "../components/CodeImage.astro";
+import { statusCodes } from "../data/status";
+---
+
+<Layout>
+    <div class="grid">
+        {
+            statusCodes.map((item, i) => (
+                <a href={`/status/${item.code}`} class="card">
+                    <CodeImage
+                        code={item.code}
+                        title={item.title}
+                        eager={i < 4}
+                    />
+                    <div class="card-info">
+                        <span class="meme">{item.memeName}</span>
+                        <span class="code">{item.code}</span>
+                    </div>
+                </a>
+            ))
+        }
+    </div>
+</Layout>
+
+<style>
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+    }
+
+    .card {
+        text-decoration: none;
+        color: inherit;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+        transition:
+            transform 0.15s,
+            border-color 0.15s;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        border-color: var(--primary);
+    }
+
+    .card-info {
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+    }
+
+    .meme {
+        font-weight: 500;
+    }
+
+    .code {
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .card {
+            transition: none;
+        }
+        .card:hover {
+            transform: none;
+        }
+    }
+</style>
